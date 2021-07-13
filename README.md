@@ -1,6 +1,6 @@
 # drevofil_platform
 drevofil Platform repository
-## Знакомство с Kubernetes, основные понятия и архитектура 
+### Знакомство с Kubernetes, основные понятия и архитектура 
 > Разберитесь почему все pod в namespace kube-system восстановились после удаления. Укажите причину в описании PR
 
 core-dns - Deployment, который следит за количеством реплик и перезапускает поды при их удалении
@@ -8,7 +8,7 @@ kube-proxy - Daemonset, аналогично Deployment следит за раб
 kube-apiserver, kube-scheduler, etcd - Static pod, за которыми следит systemd служба kubelet, манифесты хранятся по пути /etc/kubernetes/manifests
 storage-provisioner - аналогичный Static pod, является аддоном Kubernetes и его конфиг хранится в /etc/kubernetes/addons
 
-## Kubernetes controllers. ReplicaSet, Deployment, DaemonSet
+### Kubernetes controllers. ReplicaSet, Deployment, DaemonSet
 
 > Определите, что необходимо добавить в манифест, исправьте его и примените вновь.
 
@@ -36,3 +36,21 @@ error: error validating "kubernetes-controllers/frontend-replicaset.yaml": error
 >      tolerations:
 >      - operator: Exists
 Согласно документации, такая конструкция, указанная в манифесте, позволяет подам этого daemonset запускаться на любой ноде с любым указанным Taint.
+
+### Безопасность и управление доступом 
+1. task01 
+- Создан sa bob с CluterRole admin
+- Создан sa dave без (cluster)rolebinding
+
+2. task02
+- Создан namespace prometheus
+- Создан sa carol
+- Создана кластерная роль sa-role с правами выполнять get, list, watch над ресурсом pod
+- Создан ClusterRoleBinding, назначающий кластерную роль sa-role группе сервисных аккаунтов в namespace prometheus
+
+3. task03
+- Создан namespace dev
+- Создан sa jane
+- Создан ClusterRoleBinding, назначающий кластерную роль admin sa jane
+- Создан sa ken
+- Создан ClusterRoleBinding, назначающий кластерную роль view sa ken
