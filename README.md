@@ -54,3 +54,30 @@ error: error validating "kubernetes-controllers/frontend-replicaset.yaml": error
 - Создан ClusterRoleBinding, назначающий кластерную роль admin sa jane
 - Создан sa ken
 - Создан ClusterRoleBinding, назначающий кластерную роль view sa ken
+
+### Хранение данных в Kubernetes: Volumes, Storages, Statefull-приложения 
+
+1. Создан кластер kind, применён конфиг statefullset minio
+2. Задание с *
+- Согласно документации
+- https://kubernetes.io/docs/tasks/inject-data-application/distribute-credentials-secure/#define-container-environment-variables-using-secret-data
+- Создаём секрет minio-credentials.yaml, с помощью команды
+
+```kubectl create secret generic minio-credentials \
+   --from-literal=username=minio \  
+   --from-literal=password=minio123
+```
+-  Заменяем необходимые поля в манифесте statefulset на использование значения ключей (username, password) из секрета minio-credentials
+
+```
+        - name: MINIO_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: minio-credentials
+        - name: MINIO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: minio-credentials
+```
