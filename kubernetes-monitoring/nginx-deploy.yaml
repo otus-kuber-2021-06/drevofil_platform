@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otus-nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: otus-nginx
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 
+      maxSurge: 100%
+  template:
+    metadata:
+      labels:
+        app: otus-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: brrra/otus-intro:3
+        livenessProbe:
+          tcpSocket:
+            port: 8000
+        readinessProbe:
+          httpGet:
+            path: /index.html
+            port: 8000
+      - name: nginx-exporter
+        image: 'nginx/nginx-prometheus-exporter'
+        args:
+          - '-nginx.scrape-uri=http://localhost:8000/basic_status'
+        ports:
+          - name: metrics
+            containerPort: 9113
+        imagePullPolicy: Always
